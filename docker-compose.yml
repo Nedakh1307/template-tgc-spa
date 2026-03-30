@@ -21,13 +21,14 @@ services:
 
   api:
     image: seyrinian/tcg-api:latest
-    platform: linux/arm64
+    platform: linux/amd64
     container_name: tcg_api
-    restart: unless-stopped
+    restart: always
     ports:
-      - '3001:3001'
+      - '3001:3000'
+    
     environment:
-      PORT: 3001
+      PORT: 3000
       NODE_ENV: production
       JWT_SECRET: tcg-classroom-secret-key
       DATABASE_URL: postgresql://tcg_user:tcg_password@postgres:5432/tcg_database

@@ -1,11 +1,17 @@
 <template>
   <NLayoutHeader
+    v-if="auth.isAuthenticated"
     bordered
     style="padding: 0 24px; position: sticky; top: 0; z-index: 100"
   >
     <NSpace justify="space-between" align="center" style="height: 56px">
       <NSpace align="center" :size="16">
-        <RouterLink to="/">TCG SPA</RouterLink>
+        <RouterLink
+          to="/"
+          style="text-decoration: none; font-weight: bold; color: inherit"
+        >
+          TCG SPA
+        </RouterLink>
         <NButton
           tag="a"
           :href="`${apiBaseUrl.replace('/api', '')}/api-docs`"
@@ -25,14 +31,32 @@
           Maquettes
         </NButton>
       </NSpace>
+
       <NSpace align="center" :size="16">
-        <NText depth="3">Renseigner le user connecté ici</NText>
-        <NButton size="small">Déconnexion</NButton>
+        <NText depth="2">
+          Connecté : <strong>{{ auth.user?.username }}</strong>
+        </NText>
+
+        <NButton size="small" type="error" ghost @click="handleLogout">
+          Déconnexion
+        </NButton>
       </NSpace>
     </NSpace>
   </NLayoutHeader>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+import { ROUTES } from '../../router'
+import { useAuthStore } from '../../stores/auth'
+
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL as string
+const auth = useAuthStore()
+const router = useRouter()
+
+const handleLogout = () => {
+  auth.logout()
+  router.push(ROUTES.LOGIN)
+}
 </script>

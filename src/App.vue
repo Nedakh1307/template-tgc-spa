@@ -2,8 +2,9 @@
   <NConfigProvider>
     <NMessageProvider>
       <NLayout>
-        <HeaderBar />
-        <NLayoutContent>
+        <HeaderBar v-if="auth.isAuthenticated" />
+
+        <NLayoutContent :style="auth.isAuthenticated ? 'padding: 24px' : ''">
           <RouterView />
         </NLayoutContent>
       </NLayout>
@@ -13,10 +14,19 @@
 
 <script setup lang="ts">
 import HeaderBar from './components/layout/HeaderBar.vue'
+import { useAuthStore } from './stores/auth'
+
+const auth = useAuthStore()
 </script>
 
 <style>
 body {
-  padding: 0 20px;
+  margin: 0;
+  padding: 0;
+  font-family:
+    v-sans,
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 </style>
