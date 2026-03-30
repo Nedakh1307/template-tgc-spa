@@ -12,13 +12,13 @@ const router = useRouter()
 
 const allCards = ref<Card[]>([])
 const deckName = ref('')
-const selectedIds = ref<number[]>([]) // Stocke les IDs des 10 cartes
+const selectedIds = ref<number[]>([])
 const isLoading = ref(true)
 
-// Charger les cartes au montage (RG1)
 onMounted(async () => {
   try {
-    allCards.value = await api.getCards()
+    const data = await api.getCards()
+    allCards.value = data as Card[]
   } catch {
     alert('Erreur lors du chargement des cartes')
   } finally {
@@ -26,31 +26,27 @@ onMounted(async () => {
   }
 })
 
-// Gérer la sélection (Ajoute ou retire l'ID)
 const toggleCard = (id: number) => {
   const index = selectedIds.value.indexOf(id)
   if (index > -1) {
-    selectedIds.value.splice(index, 1) // Retire si déjà là
+    selectedIds.value.splice(index, 1)
   } else if (selectedIds.value.length < 10) {
-    selectedIds.value.push(id) // Ajoute si < 10
+    selectedIds.value.push(id)
   }
 }
 
-// Règle RG3 : Bouton bloqué si nom vide ou cartes != 10
 const isInvalid = computed(() => {
   return deckName.value.trim() === '' || selectedIds.value.length !== 10
 })
 
-// Soumission (RG4)
 const handleSubmit = async () => {
   if (isInvalid.value) return
-
   try {
     await api.createDeck({
       name: deckName.value,
       cards: selectedIds.value,
     })
-    router.push('/') // Redirection vers l'accueil
+    router.push('/')
   } catch {
     alert('Erreur lors de la création du deck')
   }
@@ -60,7 +56,6 @@ const handleSubmit = async () => {
 <template>
   <div class="p-6">
     <h1 class="text-2xl font-bold mb-6">Créer un nouveau Deck</h1>
-
     <div
       class="bg-white p-4 rounded-lg shadow-sm mb-6 sticky top-0 z-10 border-b"
     >
@@ -72,11 +67,10 @@ const handleSubmit = async () => {
           <input
             v-model="deckName"
             type="text"
-            placeholder="Mon super deck..."
             class="w-full border rounded p-2 mt-1"
+            placeholder="Mon super deck..."
           />
         </div>
-
         <div
           class="text-lg font-semibold"
           :class="
@@ -85,7 +79,6 @@ const handleSubmit = async () => {
         >
           Cartes : {{ selectedIds.length }} / 10
         </div>
-
         <button
           class="bg-blue-600 text-white px-6 py-2 rounded font-bold disabled:bg-gray-300 disabled:cursor-not-allowed"
           :disabled="isInvalid"
@@ -101,7 +94,7 @@ const handleSubmit = async () => {
     </div>
 
     <CardGrid
-      v-if="allCards.length > 0"
+      v-if="!isLoading"
       :cards="allCards"
       :selected-ids="selectedIds"
       :max-selection="10"
