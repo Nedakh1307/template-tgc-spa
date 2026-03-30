@@ -23,7 +23,10 @@ const request = async <T>(path: string, options: RequestInit = {}) => {
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers })
+  const res = await fetch(`${BASE_URL.replace(/\/$/, '')}${path}`, {
+    ...options,
+    headers,
+  })
 
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
