@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import HomePage from './pages/HomePage.vue'
+import HomePage from './HomePage.vue'
 import { useAuthStore } from './stores/auth'
 
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
+  CREATE_DECK: '/decks/create',
 } as const
 
 const routes = [
@@ -20,6 +21,11 @@ const routes = [
     path: ROUTES.REGISTER,
     component: () => import('./pages/RegisterPage.vue'),
     meta: { guestOnly: true },
+  },
+  {
+    path: ROUTES.CREATE_DECK,
+    component: () => import('./views/CreateDeckView.vue'),
+    meta: { requiresAuth: true },
   },
 ]
 
